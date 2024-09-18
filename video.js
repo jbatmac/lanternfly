@@ -1,26 +1,27 @@
 const size = 128;
 
-var video = document.createElement('video');
-/* var video = document.getElementById('video'); */
+var video = document.getElementById('video');
 video.setAttribute('playsinline', '');
 video.setAttribute('autoplay', '');
 video.setAttribute('muted', '');
 video.style.width = `${size}px`;
 video.style.height = `${size}px`;
 
-/* Setting up the constraint */
-var facingMode = "user"; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
-var constraints = {
-  audio: false,
-  video: {
-   facingMode: facingMode
-  }
-};
+var facingMode = "user"; // Can be 'user' or 'environment' to access back or front camera
 
-/* Stream it to video element */
-navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
-  video.srcObject = stream;
-});
+var getUserMedia = (direction) => {
+    var constraints = {
+      audio: false,
+      video: {
+       facingMode: direction
+      }
+    };
+    
+    navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
+        video.srcObject = stream;
+      });
+}
+getUserMedia(facingMode);
 
 var canvas = document.createElement("canvas");
 canvas.style.width = `${size}px`;
@@ -53,5 +54,11 @@ var snap = () => {
     });
 }
 
-
-document.getElementById('div1').appendChild(video);
+var toggle = () => {
+    if (facingMode == 'user') {
+        facingMode = 'environment';
+    } else {
+        facingMode = 'user';
+    }
+    getUserMedia(facingMode);
+}
