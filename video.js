@@ -78,6 +78,8 @@ var interval = setInterval(function() {
             //     blob.text().then((blobtext) => {
             //     });
             // });
+            video.requestVideoFrameCallback(snap)
         }
+        snap()
     }
 }, 100);
