@@ -1,4 +1,4 @@
-const size = 128;
+const size = 256;
 
 var video = document.getElementById('video');
 video.setAttribute('playsinline', '');
@@ -6,6 +6,9 @@ video.setAttribute('autoplay', '');
 video.setAttribute('muted', '');
 video.style.width = `${size}px`;
 video.style.height = `${size}px`;
+var preview = document.getElementById('preview');
+preview.style.width = `${size}px`;
+preview.style.height = `${size}px`;
 
 var snap = () => {
 }
@@ -36,11 +39,12 @@ var toggle = () => {
 }
 
 var text = document.getElementById('text')
+var src
 
 var interval = setInterval(function() {
     if (typeof cv !== 'undefined' && typeof cv.Mat !== 'undefined') {
         clearInterval(interval);  // Stop checking once it's available
-        let src = new cv.Mat(size, size, cv.CV_8UC4);
+        src = new cv.Mat(size, size, cv.CV_8UC4);
         snap = () => {
             var ctx = preview.getContext("2d");
             ctx.fillStyle = "black";
@@ -59,8 +63,9 @@ var interval = setInterval(function() {
                 w = size * vw / vh;
                 xoff = (size - w) / 2;
             }
+            // text.innerHTML = `${w}x${h}, ${vw}x${vh}, ${xoff}, ${yoff}`;
             previewContext = preview.getContext('2d');
-            previewContext.drawImage(video, xoff, yoff, w, h);
+            previewContext.drawImage(video, 0, 0, vw, vh, xoff, yoff, w, h);
 
             src.data.set(previewContext.getImageData(0, 0, size, size).data);
             brightnessSum = 0;
