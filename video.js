@@ -72,9 +72,12 @@ var interval = setInterval(function() {
             brightnessSum = 0;
             for (let i = 0; i < size; i++) {
                 for (let j = 0 ; j < size ; j++) {
-                    blue = src.data[i * size * 4 + j * 4];
-                    green = src.data[i * size * 4 + j * 4 + 1];
-                    red = src.data[i * size * 4 + j * 4 + 2];
+                    red = src.ucharAt(i, j * src.channels());
+                    green = src.ucharAt(i, j * src.channels() + 1);
+                    blue = src.ucharAt(i, j * src.channels() + 2);
+                    // red = src.data[i * size * 4 + j * 4];
+                    // green = src.data[i * size * 4 + j * 4 + 1];
+                    // blue = src.data[i * size * 4 + j * 4 + 2];
                     brightness = (blue + green + red) / 3;
                     brightnessSum += brightness;
                 }
