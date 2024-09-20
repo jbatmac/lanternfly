@@ -7,6 +7,8 @@ video.setAttribute('muted', '');
 video.style.width = `${size}px`;
 video.style.height = `${size}px`;
 var preview = document.getElementById('preview');
+preview.setAttribute('width', `${size}`);
+preview.setAttribute('height', `${size}`);
 preview.style.width = `${size}px`;
 preview.style.height = `${size}px`;
 
@@ -63,7 +65,6 @@ var interval = setInterval(function() {
                 w = size * vw / vh;
                 xoff = (size - w) / 2;
             }
-            // text.innerHTML = `${w}x${h}, ${vw}x${vh}, ${xoff}, ${yoff}`;
             previewContext = preview.getContext('2d');
             previewContext.drawImage(video, 0, 0, vw, vh, xoff, yoff, w, h);
 
