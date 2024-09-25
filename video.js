@@ -70,14 +70,13 @@ var interval = setInterval(function() {
             dataURL = preview.toDataURL();
             encoded = dataURL.toString().replace(/^data:(.*,)?/, '');
             // text.innerHTML = encoded;
-            image_json = {
-                "image_name": "liveImage.png",
-                "image_data": encoded,
-            }
             api_key = '';  // Add key here.
             fetch('https://azuremlwesteur-htudl.westeurope.inference.ml.azure.com/score', {
                 method: 'POST',
-                body: image_json,
+                body: {
+                    "image_name": "liveImage.png",
+                    "image_data": encoded,
+                },
                 headers: {
                   'Content-Type': 'application/json',
                   'Authorization': ('Bearer '+ api_key),
