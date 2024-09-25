@@ -67,27 +67,25 @@ var interval = setInterval(function() {
             }
             previewContext = preview.getContext('2d');
             previewContext.drawImage(video, 0, 0, vw, vh, xoff, yoff, w, h);
-
-            src.data.set(previewContext.getImageData(0, 0, size, size).data);
-            brightnessSum = 0;
-            for (let i = 0; i < size; i++) {
-                for (let j = 0 ; j < size ; j++) {
-                    red = src.ucharAt(i, j * src.channels());
-                    green = src.ucharAt(i, j * src.channels() + 1);
-                    blue = src.ucharAt(i, j * src.channels() + 2);
-                    // red = src.data[i * size * 4 + j * 4];
-                    // green = src.data[i * size * 4 + j * 4 + 1];
-                    // blue = src.data[i * size * 4 + j * 4 + 2];
-                    brightness = (blue + green + red) / 3;
-                    brightnessSum += brightness;
-                }
+            dataURL = preview.toDataURL();
+            encoded = dataURL.toString().replace(/^data:(.*,)?/, '');
+            // text.innerHTML = encoded;
+            image_json = {
+                "image_name": "liveImage.png",
+                "image_data": encoded,
             }
-            text.innerHTML = `average brightness: ${brightnessSum / size / size}`
-            // preview.toBlob((blob) => {
-            //     blob.text().then((blobtext) => {
-            //     });
-            // });
-            video.requestVideoFrameCallback(snap)
+            api_key = '';  // Add key here.
+            fetch('https://azuremlwesteur-htudl.westeurope.inference.ml.azure.com/score', {
+                method: 'POST',
+                body: image_json,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': ('Bearer '+ api_key),
+                }
+              }).then((response) => {
+                text.innerHTML = response;
+              });
+            setTimeout(snap, 1000);  // call back in 1 second
         }
         snap()
     }
