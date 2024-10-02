@@ -44,7 +44,7 @@ var text = document.getElementById('text')
 var src
 
 var interval = setInterval(function() {
-    if (typeof cv !== 'undefined' && typeof cv.Mat !== 'undefined') {
+    if (typeof cv !== 'undefined' && typeof cv.Mat !== 'undefined' && typeof axios !== 'undefined') {
         clearInterval(interval);  // Stop checking once it's available
         src = new cv.Mat(size, size, cv.CV_8UC4);
         snap = () => {
@@ -68,22 +68,37 @@ var interval = setInterval(function() {
             previewContext = preview.getContext('2d');
             previewContext.drawImage(video, 0, 0, vw, vh, xoff, yoff, w, h);
             dataURL = preview.toDataURL();
-            encoded = dataURL.toString().replace(/^data:(.*,)?/, '');
-            // text.innerHTML = encoded;
-            api_key = '';  // Add key here.
-            fetch('https://azuremlwesteur-htudl.westeurope.inference.ml.azure.com/score', {
-                method: 'POST',
-                body: {
-                    "image_name": "liveImage.png",
-                    "image_data": encoded,
-                },
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': ('Bearer '+ api_key),
-                }
-              }).then((response) => {
-                text.innerHTML = response;
-              });
+            encodedString = dataURL.toString().replace(/^data:(.*,)?/, '');
+            
+            // text.innerHTML = encodedString;
+            // Create a JSON object                                                                                                                                                                                                                                     
+            const imageJson = {
+                image_name: "liveImage.png",
+                image_data: encodedString
+            };
+
+            // Convert JSON object to string                                                                                                                                                                                                                            
+            const jsonString = JSON.stringify(imageJson);
+
+            const url = 'https://azuremlwesteur-htudl.westeurope.inference.ml.azure.com/score';
+            // text.innerHTML = apiKey.value
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey.value}`,
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization, Origin, X-Requested-With",
+            };
+
+            axios.post(url, jsonString, { headers: headers })
+                .then(response => {
+                    console.log(response.data);
+                    text.innerHTML = response.data
+                })
+                .catch(error => {
+                    console.error('failed:', error)
+                });
             setTimeout(snap, 1000);  // call back in 1 second
         }
         snap()
